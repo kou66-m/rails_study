@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>BMI Check</title>
+<style>
+  #result { display: none; }
+  #history { display: none; }
+  #error_message { color: red; }
+  #history table { display: none; }
+</style>
+
+<div id="form">
+  <h1>BMI Check</h1>
+  <p id="error_message"></p>
+  <form action="#result" method="POST">
+    Height(cm): <input type="text" name="height"><br>
+    Weight(kg): <input type="text" name="weight"><br>
+    <input type="submit" name="check" value="Check">
+  </form>
+  <p>
+    <a href="#history">View histories</a>
+  </p>
+</div>
+
+<div id="result">
+  <h1>Result</h1>
+  <table>
+    <tr>
+      <th class="t_date">Date</th>
+      <th class="t_height">Height</th>
+      <th class="t_weight">Weight</th>
+      <th class="t_bmi">BMI</th>
+      <th class="t_result">Result</th>
+    </tr>
+    <tr>
+      <td class="t_date"></td>
+      <td class="t_height"></td>
+      <td class="t_weight"></td>
+      <td class="t_bmi"></td>
+      <td class="t_result"></td>
+    </tr>
+  </table>
+  <a href="#form">Back</a>
+</div>
+
+<div id="history">
+  <h1>Histories</h1>
+  <p>No Result</p>
+  <table>
+    <tr>
+      <th class="t_date">Date</th>
+      <th class="t_height">Height</th>
+      <th class="t_weight">Weight</th>
+      <th class="t_bmi">BMI</th>
+      <th class="t_result">Result</th>
+    </tr>
+  </table>
+  <a href="#form">Back</a>
+</div>
+
+<script>
+  var div_form = document.getElementById("form");
+  var div_result = document.getElementById("result");
+  var div_history = document.getElementById("history");
+  var bmi_form = document.querySelector("form[action='#result']");
+  var input_height = document.querySelector("form[action='#result'] input[name='height']");
+  var input_weight = document.querySelector("form[action='#result'] input[name='weight']");
+  var p_input_error = document.getElementById("error_message");
+  var tr_result = document.querySelector("#result table tr:last-child");
+  var table_history = document.querySelector("#history table");
+  var p_no_history = document.querySelector("#history p");
+  var link_histories = document.querySelectorAll("a[href='#history']");
+  var link_backs = document.querySelectorAll("a[href='#form']");
+
+  function hide(element) { element.style.display = 'none'; }
+  function show(element) { element.style.display = 'block'; }
+  function pageBack() {
+    clearFormValues();
+    hide(div_result);
+    hide(div_history);
+    show(div_form);
+  }
+  function goToHistory() {
+    hide(div_form);
+    hide(div_result);
+    show(div_history);
+  }
+  function validParams(height, weight) {
+    var numberRegexp = new RegExp(/^([1-9]\d*|0)(\.\d+)?$/);
+    if (!numberRegexp.test(height) || !numberRegexp.test(weight)) { return false; }
+    if ((height <= 0) || (weight <= 0)) { return false; }
+    return true;
+  }
+  function calcBmi(height, weight) { return weight / ((height / 100) ** 2); }
+  function checkBmi(bmi) {
+    if (bmi < 18.5) {
+      return "Low";
+    } else if (bmi < 25.0) {
+      return "Normal";
+    } else {
+      return "Obese";
+    }
+  }
+  function setResults(height, weight, bmi, result) {
+    var date = new Date();
+    tr_result.querySelector(".t_date").textContent = [date.getDate(), date.getMonth()+1, date.getFullYear()].join("/");
+    tr_result.querySelector(".t_height").textContent = height;
+    tr_result.querySelector(".t_weight").textContent = weight;
+    tr_result.querySelector(".t_bmi").textContent = bmi;
+    tr_result.querySelector(".t_result").textContent = result;
+
+    table_history.appendChild(tr_result.cloneNode(true));
+    hide(p_no_history);
+    show(table_history);
+  }
+  function clearFormValues() {
+    bmi_form.reset();
+    p_input_error.textContent = "";
+  }
+
+  bmi_form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    var height = input_height.value;
+    var weight = input_weight.value;
+
+    if (validParams(height, weight)) {
+      var bmi = calcBmi(height,weight);
+      var result = checkBmi(bmi);
+
+      setResults(height, weight, bmi, result);
+
+      hide(div_form);
+      hide(div_history);
+      show(div_result);
+    } else {
+      // error
+      p_input_error.textContent = "Invalid input values";
+    }
+  });
+  
+  link_backs.forEach(function(element) { element.addEventListener("click", pageBack);});
+  link_histories.forEach(function(element) { element.addEventListener("click", goToHistory);});
+</script>
