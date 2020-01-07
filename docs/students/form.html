@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Student Form</title>
+<style>
+  label { display: inline-block; width: 45px; }
+</style>
+
+<h1>Input Student data</h1>
+<form action="result.html" method="POST" id="form">
+  <label>Name</label>
+  <input name="name" type="text"><br>
+  <label>Age</label>
+  <input name="age" type="text">
+  <input type="submit" value="Submit">
+</form>
+
+<script>
+  document.getElementById("form").addEventListener("submit", function(event) {
+    var students = JSON.parse(localStorage.getItem("students"));
+    if (!Array.isArray(students)) { students = [] }
+    var student = {
+      name: event.target.querySelector("input[name=name]").value,
+      age: event.target.querySelector("input[name=age]").value
+    }
+    localStorage.setItem("students", JSON.stringify([...students, student]));
+  });
+</script>

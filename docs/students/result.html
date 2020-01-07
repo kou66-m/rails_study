@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Added Student data</title>
+
+<p>
+  Added Student data!<br>
+  There are
+  <span id="count"></span> 
+  student records.
+</p>
+<a href="form.html">Back</a>
+
+<script>
+  var students = JSON.parse(localStorage.getItem("students"));
+  document.getElementById("count").textContent = students.length;
+</script>
