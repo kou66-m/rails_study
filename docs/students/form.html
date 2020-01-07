@@ -6,7 +6,7 @@
 </style>
 
 <h1>Input Student data</h1>
-<form action="result.html" method="POST" id="form">
+<form action="result.html" method="get" id="form">
   <label>Name</label>
   <input name="name" type="text"><br>
   <label>Age</label>
@@ -16,6 +16,8 @@
 
 <script>
   document.getElementById("form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
     var students = JSON.parse(localStorage.getItem("students"));
     if (!Array.isArray(students)) { students = [] }
     var student = {
@@ -23,5 +25,7 @@
       age: event.target.querySelector("input[name=age]").value
     }
     localStorage.setItem("students", JSON.stringify([...students, student]));
+
+    window.location.href = "result.html"
   });
 </script>
